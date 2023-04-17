@@ -61,8 +61,15 @@ export default {
     components: {ProductList},
   data() {
     return {
-      products,
-    };
+      page: 1,
+      productsPerPage: 3,
+    }
   },
+  computed: {
+    products(){
+      const offset = (this.page - 1) * this.productsPerPage;
+      return products.slice(offset, offset + this.productsPerPage);
+    }
+  }
 };
 </script>
