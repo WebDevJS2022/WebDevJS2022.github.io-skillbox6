@@ -28,14 +28,12 @@
 </template>
 
 <script>
-import eventBus from '@/eventBus';
+import gotoPage from '@/helpers/gotoPage';
 
 export default {
     name: 'ProductItem',
-    methods: { //создали событие переключение страниц методом $emit
-      gotoPage(pageName, pageParams){
-        eventBus.$emit('gotoPage', pageName, pageParams);
-      }
+    methods: { 
+      gotoPage
     },
     props: ['product'],
 }
