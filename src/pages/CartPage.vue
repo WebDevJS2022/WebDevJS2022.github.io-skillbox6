@@ -18,7 +18,7 @@
                 Корзина
             </h1>
             <span class="content__info">
-                3 товара
+                {{ $store.state.cartProducts.length }} товара
             </span>
         </div>
 
