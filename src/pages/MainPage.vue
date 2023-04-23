@@ -63,7 +63,9 @@ export default {
   //Вывод списка товаров из API + пагинация
   methods: {
     loadProducts(){
-      axios
+      clearTimeout(this.loadProductsTimer);
+      this.loadProductsTimer = setTimeout(() => {
+        axios
       .get(API_BASE_URL + `/api/products`, {
         params: {
           page: this.page, //номер страницы
@@ -75,6 +77,7 @@ export default {
         }
       })
         .then(response => this.productsData = response.data);
+      }, 0);
     }
   },
   //пагинация из API 
