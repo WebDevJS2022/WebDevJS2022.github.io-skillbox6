@@ -91,7 +91,7 @@ export default {
         .then(response => this.productsData = response.data)
         .catch(() => this.productsLoadingFailed = true) //отлавливаем любую ошибку и выводим свойство productsLoadingFailed 
         .then(() => this.productsLoading = false); //когда загрузка произошла и данные получены, убираем свойство productsLoading
-      }, 5000); //загрузка длится 5 секунд
+      }, 1000); //загрузка длится 1 секунду
     }
   },
   //пагинация из API 

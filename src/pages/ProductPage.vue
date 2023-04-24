@@ -1,5 +1,7 @@
 <template>
-  <main class="content container">
+  <main class="content container" v-if="productLoading">Загрузка товара...</main>
+  <main class="content container" v-else-if="!productData">Не удалось загрузить товар</main>
+  <main class="content container" v-else>
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
@@ -23,7 +25,7 @@
     <section class="item">
       <div class="item__pics pics">
         <div class="pics__wrapper">
-          <img width="570" height="570" :src="product.image" :alt="product.title">
+          <img width="570" height="570" v-bind:src="product.image.file.url" v-bind:alt="product.title">
         </div>
       </div>
 
@@ -148,39 +150,53 @@
 </template>
 
 <script>
-import products from '@/data/products';
-import categories from '@/data/categories';
 import gotoPage from '@/helpers/gotoPage';
 import numberFormat from '@/helpers/numberFormat';
 import FormCounter from '@/components/FormCounter.vue';
+import axios from 'axios';
+import {API_BASE_URL} from "@/config";
 
 export default {
-  components: {FormCounter},
-  data(){
-        return {
-            productAmount: 1
-        };
+  components: { FormCounter },
+  data() {
+    return {
+      productAmount: 1,
+      productData: null, //выводим товар из API
+      productLoading: false, //загрузка данных
+      productLoadingFailed: false, //обработка ошибок
+    };
+  },
+  // опция, объект методов filters работает так же как methods
+  filters: {
+    numberFormat
+  },
+  computed: {
+    product() {
+      return this.productData;
     },
-    // опция, объект методов filters работает так же как methods
-    filters: {
-      numberFormat
-    },
-    computed: {
-      product(){
-        return products.find(product => product.id === +this.$route.params.id);
-      },
-      category(){
-        return categories.find(category => category.id === this.product.categoryId);
-      }
-    },
-    methods: {
-      gotoPage,
-      addToCart(){
-        this.$store.commit(
-                    'addProductToCart',
-                    {productId: this.product.id, amount: this.productAmount}
-        );
-      }
+    category() {
+      return this.productData.category;
     }
+  },
+  methods: {
+    gotoPage,
+    addToCart() {
+      this.$store.commit(
+        'addProductToCart',
+        { productId: this.product.id, amount: this.productAmount }
+      );
+    },
+    loadProduct() {
+      this.productLoading = true; //в начале загрузки сообщаем что загрузка идет
+      this.productLoadingFailed = false; //в начале загрузки очищаем от свойства productLoadingFailed,тк оно сообщает об ошибке
+      axios.get(API_BASE_URL + `/api/products/` + this.$route.params.id)
+        .then(response => this.productData = response.data)
+        .catch(() => this.productLoadingFailed = true)
+        .then(() => this.productLoading = false);
+    }
+  },
+  created() {
+    this.loadProduct();
+  }
 }
 </script>
