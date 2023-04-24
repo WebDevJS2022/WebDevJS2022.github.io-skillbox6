@@ -15,8 +15,9 @@
 
       <section class="catalog">
 
-        <div v-if="productsLoading" class="loading">Загрузка товаров...</div>
+        <div v-if="productsLoading" class="loading">Загрузка товаров...<transition><img src="/img/Spinner-3.gif"></transition></div>
         <div v-if="productsLoadingFailed" class="loading">Произошла ошибка при загрузке товаров
+          <transition><img src="/img/Spinner-3.gif"></transition>
           <button @click.prevent="loadProducts">Попробовать еще раз</button>
         </div>
 
@@ -90,7 +91,7 @@ export default {
         .then(response => this.productsData = response.data)
         .catch(() => this.productsLoadingFailed = true) //отлавливаем любую ошибку и выводим свойство productsLoadingFailed 
         .then(() => this.productsLoading = false); //когда загрузка произошла и данные получены, убираем свойство productsLoading
-      }, 0);
+      }, 5000); //загрузка длится 5 секунд
     }
   },
   //пагинация из API 
