@@ -16,6 +16,9 @@
       <section class="catalog">
 
         <div v-if="productsLoading" class="loading">Загрузка товаров...</div>
+        <div v-if="productsLoadingFailed" class="loading">Произошла ошибка при загрузке товаров
+          <button @click.prevent="loadProducts">Попробовать еще раз</button>
+        </div>
 
         <ProductList :products="products" />
         <BasePagination v-model="page" :count="countProducts" :per-page="productsPerPage" />
@@ -48,6 +51,7 @@ export default {
       productsData: null, //Вывод списка товаров из API
 
       productsLoading: false, //обработка загрузки
+      productsLoadingFailed: false, //отвечает за статус произошла загрузка или нет
     }
   },
   computed: {
@@ -69,6 +73,7 @@ export default {
   methods: {
     loadProducts(){
       this.productsLoading = true; //в начале загрузки сообщаем что загрузка идет
+      this.productsLoadingFailed = false; //в начале загрузки очищаем от свойства productsLoadingFailed,тк оно сообщает об ошибке
       clearTimeout(this.loadProductsTimer);
       this.loadProductsTimer = setTimeout(() => {
         axios
@@ -83,6 +88,7 @@ export default {
         }
       })
         .then(response => this.productsData = response.data)
+        .catch(() => this.productsLoadingFailed = true) //отлавливаем любую ошибку и выводим свойство productsLoadingFailed 
         .then(() => this.productsLoading = false); //когда загрузка произошла и данные получены, убираем свойство productsLoading
       }, 0);
     }
