@@ -15,9 +15,9 @@
 
       <section class="catalog">
 
-        <div v-if="productsLoading" class="loading">Загрузка товаров...<transition><img src="/img/Spinner-3.gif"></transition></div>
+        <div v-if="productsLoading" class="loading">Загрузка товаров...<transition><img src="../img/Spinner-3.gif"></transition></div>
         <div v-if="productsLoadingFailed" class="loading">Произошла ошибка при загрузке товаров
-          <transition><img src="/img/Spinner-3.gif"></transition>
+          <transition><img src="../img/Spinner-3.gif"></transition>
           <button @click.prevent="loadProducts">Попробовать еще раз</button>
         </div>
 
