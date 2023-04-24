@@ -197,6 +197,11 @@ export default {
   },
   created() {
     this.loadProduct();
+  },
+  watch: {
+    '$route.params.id'(){
+      this.loadProduct();
+    }
   }
 }
 </script>
