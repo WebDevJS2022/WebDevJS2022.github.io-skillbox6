@@ -195,12 +195,12 @@ export default {
         .then(() => this.productLoading = false);
     }
   },
-  created() {
-    this.loadProduct();
-  },
   watch: {
-    '$route.params.id'(){
-      this.loadProduct();
+    '$route.params.id': {
+      handler(){
+        this.loadProduct();
+      },
+      immediate: true
     }
   }
 }
