@@ -14,6 +14,9 @@
       <ProductFilter :price-from.sync="filterPriceFrom" :price-to.sync="filterPriceTo" :category-id.sync="filterCategoryId" :color-id.sync="filterColorId" />
 
       <section class="catalog">
+
+        <div v-if="productsLoading" class="loading">Загрузка товаров...</div>
+
         <ProductList :products="products" />
         <BasePagination v-model="page" :count="countProducts" :per-page="productsPerPage" />
       </section>
@@ -42,7 +45,9 @@ export default {
       page: 1,
       productsPerPage: 3,
 
-      productsData: null //Вывод списка товаров из API
+      productsData: null, //Вывод списка товаров из API
+
+      productsLoading: false, //обработка загрузки
     }
   },
   computed: {
@@ -63,6 +68,7 @@ export default {
   //Вывод списка товаров из API + пагинация
   methods: {
     loadProducts(){
+      this.productsLoading = true; //в начале загрузки сообщаем что загрузка идет
       clearTimeout(this.loadProductsTimer);
       this.loadProductsTimer = setTimeout(() => {
         axios
@@ -76,7 +82,8 @@ export default {
           colorId: this.filterColorId,
         }
       })
-        .then(response => this.productsData = response.data);
+        .then(response => this.productsData = response.data)
+        .then(() => this.productsLoading = false); //когда загрузка произошла и данные получены, убираем свойство productsLoading
       }, 0);
     }
   },
@@ -103,3 +110,9 @@ export default {
   }
 };
 </script>
+
+<style>
+.loading {
+  margin: auto;
+}
+</style>
