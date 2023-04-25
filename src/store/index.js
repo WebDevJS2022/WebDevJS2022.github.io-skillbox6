@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import products from '@/data/products';
+import axios from 'axios';
+import { API_BASE_URL } from '@/config';
 
 Vue.use(Vuex); //Сообщаем Vue, что будем использовать Vuex
 
@@ -9,7 +11,11 @@ export default new Vuex.Store({  // Создаем и Экспортируем �
     state: { // состояние товаров
       cartProducts: [
           {productId: 1, amount: 2}
-      ]
+      ],
+
+      userAccessKey: null, //для хранения ключа пользователя
+
+      cartProductsData: [] //информация о товарах в корзине
     },
     mutations: {
       addProductToCart(state, {productId, amount}){
@@ -32,6 +38,12 @@ export default new Vuex.Store({  // Создаем и Экспортируем �
       },
       deleteCartProduct(state, productId){ //удаление товара из корзины
           state.cartProducts = state.cartProducts.filter(item => item.productId !== productId);
+      },
+      updateUserAccessKey(state, accessKey){
+        state.userAccessKey = accessKey;
+      },
+      updateCartProductsData(state, items){
+        state.cartProductsData = items;
       }
     },
     getters: {
@@ -46,5 +58,23 @@ export default new Vuex.Store({  // Создаем и Экспортируем �
       cartTotalPrice(state, getters){ //общая стоимость покупки
           return getters.cartDetailProducts.reduce((acc, item) => (item.product.price * item.amount) + acc, 0);
       }
+    },
+    actions: { //действия для получения информации о корзине (вместо мутаций,тк там все дб синхронно)
+        loadCart(context){
+            axios
+              .get(API_BASE_URL + '/api/baskets', {
+                params: {
+                    userAccessKey: context.state.userAccessKey
+                }
+              })
+              .then(response => {
+                if(!context.state.userAccessKey){
+                    localStorage.setItem('userAccessKey', response.data.user.accessKey);
+                    context.commit('updateUserAccessKey', response.data.user.accessKey);
+                }
+                
+                context.commit('updateCartProductsData', response.data.items);
+              })
+        }
     }
   }); 
