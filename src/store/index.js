@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import products from '@/data/products';
 import axios from 'axios';
 import { API_BASE_URL } from '@/config';
 
@@ -55,9 +54,14 @@ export default new Vuex.Store({  // Создаем и Экспортируем �
     getters: {
       cartDetailProducts(state){ //подробная информация о товарах
           return state.cartProducts.map(item => {
+            const product = state.cartProductsData.find(p => p.product.id === item.productId).product;
+
               return {
                   ...item,
-                  product: products.find(p => p.id === item.productId)
+                  product: {
+                    ...product,
+                    image: product.image.file.url
+                  }
               }
           });
       },
