@@ -9,9 +9,7 @@ Vue.use(Vuex); //Сообщаем Vue, что будем использоват�
 
 export default new Vuex.Store({  // Создаем и Экспортируем новое хранилище Vuex.Store
     state: { // состояние товаров
-      cartProducts: [
-          {productId: 1, amount: 2}
-      ],
+      cartProducts: [],
 
       userAccessKey: null, //для хранения ключа пользователя
 
@@ -44,6 +42,14 @@ export default new Vuex.Store({  // Создаем и Экспортируем �
       },
       updateCartProductsData(state, items){
         state.cartProductsData = items;
+      },
+      syncCartProducts(state){ //объединение прошлых данных Корзины с данными из API
+        state.cartProducts = state.cartProductsData.map(item => {
+            return{
+                productId: item.product.id,
+                amount: item.quantity
+            }
+        });
       }
     },
     getters: {
@@ -73,7 +79,8 @@ export default new Vuex.Store({  // Создаем и Экспортируем �
                     context.commit('updateUserAccessKey', response.data.user.accessKey);
                 }
                 
-                context.commit('updateCartProductsData', response.data.items);
+                context.commit('updateCartProductsData', response.data.items); //сначала прилетают данные из API
+                context.commit('syncCartProducts'); //затем проводим синхронизацию
               })
         }
     }

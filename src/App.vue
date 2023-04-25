@@ -126,7 +126,7 @@ export default {
     }
     this.loadCart();
   },
-  methods: {
+  methods: { 
     ...mapActions(['loadCart']),
     ...mapMutations(['updateUserAccessKey'])
   }
