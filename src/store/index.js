@@ -12,7 +12,10 @@ export default new Vuex.Store({  // Создаем и Экспортируем �
 
       userAccessKey: null, //для хранения ключа пользователя
 
-      cartProductsData: [] //информация о товарах в корзине
+      cartProductsData: [], //информация о товарах в корзине
+
+      cartLoading: false,
+      cartLoadingFailed: false,
     },
     mutations: {
       addProductToCart(state, {productId, amount}){
@@ -71,21 +74,29 @@ export default new Vuex.Store({  // Создаем и Экспортируем �
     },
     actions: { //действия для получения информации о корзине (вместо мутаций,тк там все дб синхронно)
         loadCart(context){
-            axios
-              .get(API_BASE_URL + '/api/baskets', {
-                params: {
-                    userAccessKey: context.state.userAccessKey
-                }
-              })
-              .then(response => {
-                if(!context.state.userAccessKey){
-                    localStorage.setItem('userAccessKey', response.data.user.accessKey);
-                    context.commit('updateUserAccessKey', response.data.user.accessKey);
-                }
-                
-                context.commit('updateCartProductsData', response.data.items); //сначала прилетают данные из API
-                context.commit('syncCartProducts'); //затем проводим синхронизацию
-              })
-        }
+            context.state.cartLoading = true;
+            context.state.cartLoadingFailed = false;
+
+            clearTimeout(this.loadCartTimer);
+            context.state.loadCartTimer = setTimeout(() => {
+                return  axios
+                .get(API_BASE_URL + '/api/baskets', {
+                  params: {
+                      userAccessKey: context.state.userAccessKey
+                  }
+                })
+                .then(response => {
+                  if(!context.state.userAccessKey){
+                      localStorage.setItem('userAccessKey', response.data.user.accessKey);
+                      context.commit('updateUserAccessKey', response.data.user.accessKey);
+                  }
+                  
+                  context.commit('updateCartProductsData', response.data.items); //сначала прилетают данные из API
+                  context.commit('syncCartProducts'); //затем проводим синхронизацию
+                })
+                .catch(() => context.state.cartLoadingFailed = true)
+                .then(() => context.state.cartLoading = false);
+            }, 2000)
+        },
     }
   }); 

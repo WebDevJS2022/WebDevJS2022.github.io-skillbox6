@@ -1,5 +1,7 @@
 <template>
-    <main class="content container">
+    <main class="content container" v-if="$store.state.cartLoading">Загрузка корзины...</main>
+    <main class="content container" v-else-if="$store.state.cartLoadingFailed">Не удалось загрузить корзину</main>
+    <main class="content container" v-else>
         <div class="content__top">
             <ul class="breadcrumbs">
                 <li class="breadcrumbs__item">
