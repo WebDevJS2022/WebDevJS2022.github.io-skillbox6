@@ -155,6 +155,7 @@ import numberFormat from '@/helpers/numberFormat';
 import FormCounter from '@/components/FormCounter.vue';
 import axios from 'axios';
 import {API_BASE_URL} from "@/config";
+import { mapActions } from 'vuex';
 
 export default {
   components: { FormCounter },
@@ -179,12 +180,11 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['addProductToCart']),
+
     gotoPage,
     addToCart() {
-      this.$store.commit(
-        'addProductToCart',
-        { productId: this.product.id, amount: this.productAmount }
-      );
+      this.addProductToCart({productId: this.product.id, amount: this.productAmount});
     },
     loadProduct() {
       this.productLoading = true; //в начале загрузки сообщаем что загрузка идет
@@ -193,7 +193,7 @@ export default {
         .then(response => this.productData = response.data)
         .catch(() => this.productLoadingFailed = true)
         .then(() => this.productLoading = false);
-    }
+    },
   },
   watch: {
     '$route.params.id': {

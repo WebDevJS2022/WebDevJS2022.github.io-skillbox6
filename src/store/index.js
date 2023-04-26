@@ -18,17 +18,6 @@ export default new Vuex.Store({  // Создаем и Экспортируем �
       cartLoadingFailed: false,
     },
     mutations: {
-      addProductToCart(state, {productId, amount}){
-          const item = state.cartProducts.find(item => item.productId === productId);
-          if(item){
-              item.amount += amount;
-          }else{
-              state.cartProducts.push({
-                  productId,
-                  amount,
-              });
-          }
-      },
       updateCartProductAmount(state, {productId, amount}){ //добавление товара в корзину
           const item = state.cartProducts.find(item => item.productId === productId);
   
@@ -98,5 +87,20 @@ export default new Vuex.Store({  // Создаем и Экспортируем �
                 .then(() => context.state.cartLoading = false);
             }, 2000)
         },
+        addProductToCart(context, {productId, amount}){
+            axios
+                .post(API_BASE_URL + '/api/baskets/products', {
+                    productId: productId,
+                    quantity: amount
+                }, {
+                    params: {
+                        userAccessKey: context.state.userAccessKey
+                }
+                })
+                .then(response => {
+                    context.commit('updateCartProductsData', response.data.items); //сначала прилетают данные из API
+                    context.commit('syncCartProducts'); //затем проводим синхронизацию
+                })
+        }
     }
   }); 
