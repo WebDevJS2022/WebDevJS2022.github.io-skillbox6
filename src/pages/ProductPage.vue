@@ -88,10 +88,14 @@
               
               <FormCounter v-model="productAmount" :amount="productAmount" />
 
-              <button class="button button--primery" type="submit">
+              <button class="button button--primery" type="submit" :disabled="productAddSending">
                 В корзину
               </button>
             </div>
+
+            <div v-show="productAdded">Товар добавлен в корзину</div>
+            <div v-show="productAddSending">Добавляем товар в корзину...</div>
+
           </form>
         </div>
       </div>
@@ -165,6 +169,9 @@ export default {
       productData: null, //выводим товар из API
       productLoading: false, //загрузка данных
       productLoadingFailed: false, //обработка ошибок
+
+      productAdded: false, // добавился товар или нет
+      productAddSending: false, // в данный момент товар отправляется в корзину
     };
   },
   // опция, объект методов filters работает так же как methods
@@ -184,7 +191,14 @@ export default {
 
     gotoPage,
     addToCart() {
-      this.addProductToCart({productId: this.product.id, amount: this.productAmount});
+      this.productAdded = false; //товар еще не добавился
+      this.productAddSending = true;
+
+      this.addProductToCart({productId: this.product.id, amount: this.productAmount})
+        .then(() => {
+          this.productAdded = true;
+          this.productAddSending = false;
+        });
     },
     loadProduct() {
       this.productLoading = true; //в начале загрузки сообщаем что загрузка идет

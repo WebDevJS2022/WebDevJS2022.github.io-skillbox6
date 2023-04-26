@@ -88,7 +88,7 @@ export default new Vuex.Store({  // Создаем и Экспортируем �
             }, 2000)
         },
         addProductToCart(context, {productId, amount}){
-            axios
+            return axios
                 .post(API_BASE_URL + '/api/baskets/products', {
                     productId: productId,
                     quantity: amount
