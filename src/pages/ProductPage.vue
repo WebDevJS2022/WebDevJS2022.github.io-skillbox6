@@ -94,7 +94,7 @@
             </div>
 
             <div v-show="productAdded">Товар добавлен в корзину</div>
-            <div v-show="productAddSending">Добавляем товар в корзину...</div>
+            <div v-show="productAddSending">Добавляем товар в корзину...<transition><img src="../img/Spinner-3.gif"></transition></div>
 
           </form>
         </div>
