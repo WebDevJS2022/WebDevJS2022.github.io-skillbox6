@@ -88,18 +88,21 @@ export default new Vuex.Store({  // Создаем и Экспортируем �
             }, 2000)
         },
         addProductToCart(context, {productId, amount}){
-            return axios
-                .post(API_BASE_URL + '/api/baskets/products', {
-                    productId: productId,
-                    quantity: amount
-                }, {
-                    params: {
-                        userAccessKey: context.state.userAccessKey
-                }
-                })
-                .then(response => {
-                    context.commit('updateCartProductsData', response.data.items); //сначала прилетают данные из API
-                    context.commit('syncCartProducts'); //затем проводим синхронизацию
+            return (new Promise(resolve => setTimeout(resolve, 2000)))  //Timeout - задержка вызова на 2 сек
+                .then(() => {
+                    return axios
+                        .post(API_BASE_URL + '/api/baskets/products', {
+                            productId: productId,
+                            quantity: amount
+                        }, {
+                            params: {
+                                userAccessKey: context.state.userAccessKey
+                            }
+                        })
+                        .then(response => {
+                            context.commit('updateCartProductsData', response.data.items); //сначала прилетают данные из API
+                            context.commit('syncCartProducts'); //затем проводим синхронизацию
+                        })
                 })
         }
     }
