@@ -127,6 +127,21 @@ export default new Vuex.Store({  // Создаем и Экспортируем �
             .catch(() => {
                 context.commit('syncCartProducts');
             })
+        },
+        deleteProductToCart(context, productId) { //удаление товаров из корзины
+            return axios
+            .delete(API_BASE_URL + '/api/baskets/products', {
+                data: {
+                    productId: productId,
+                },
+                params: {
+                    userAccessKey: context.state.userAccessKey,
+                }
+            })
+            .then(response => {
+                context.commit('updateCartProductsData', response.data.items); //сначала прилетают данные из API
+                context.commit('syncCartProducts');
+            })
         }    
     }
   }); 
