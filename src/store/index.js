@@ -108,6 +108,10 @@ export default new Vuex.Store({  // Создаем и Экспортируем �
         updateCartProductAmount(context, {productId, amount}){ //Изменить количество товаров в корзине
             context.commit('updateCartProductAmount', {productId, amount})
 
+            if(amount < 1) {
+                return;
+            }
+
             return axios
             .put(API_BASE_URL + '/api/baskets/products', {
                 productId: productId,
