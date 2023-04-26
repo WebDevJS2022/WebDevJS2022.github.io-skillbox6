@@ -87,7 +87,7 @@ export default new Vuex.Store({  // Создаем и Экспортируем �
                 .then(() => context.state.cartLoading = false);
             }, 2000)
         },
-        addProductToCart(context, {productId, amount}){
+        addProductToCart(context, {productId, amount}){ //Добавить товар в корзину
             return (new Promise(resolve => setTimeout(resolve, 2000)))  //Timeout - задержка вызова на 2 сек
                 .then(() => {
                     return axios
@@ -104,6 +104,25 @@ export default new Vuex.Store({  // Создаем и Экспортируем �
                             context.commit('syncCartProducts'); //затем проводим синхронизацию
                         })
                 })
-        }
+        },
+        updateCartProductAmount(context, {productId, amount}){ //Изменить количество товаров в корзине
+            context.commit('updateCartProductAmount', {productId, amount})
+
+            return axios
+            .put(API_BASE_URL + '/api/baskets/products', {
+                productId: productId,
+                quantity: amount
+            }, {
+                params: {
+                    userAccessKey: context.state.userAccessKey
+                }
+            })
+            .then(response => {
+                context.commit('updateCartProductsData', response.data.items); //сначала прилетают данные из API
+            })
+            .catch(() => {
+                context.commit('syncCartProducts');
+            })
+        }    
     }
   }); 
