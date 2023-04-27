@@ -18,6 +18,11 @@ export default new Vuex.Store({  // Создаем и Экспортируем �
       cartLoadingFailed: false,
     },
     mutations: {
+        resetCart(state){ //сброс данных корзины
+            state.cartProducts = [];
+            state.cartProductsData = [];
+        },
+
       updateCartProductAmount(state, {productId, amount}){ //добавление товара в корзину
           const item = state.cartProducts.find(item => item.productId === productId);
   

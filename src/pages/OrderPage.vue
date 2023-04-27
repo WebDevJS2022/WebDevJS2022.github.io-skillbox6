@@ -28,7 +28,7 @@
     </div>
 
     <section class="cart">
-      <form class="cart__form form" action="#" method="POST">
+      <form class="cart__form form" action="#" method="POST" @submit.prevent="order">
         <div class="cart__field">
           <div class="cart__data">
 
@@ -36,7 +36,7 @@
             <BaseFormText v-model="formData.address" :error="formError.address" title="Адрес доставки" placeholder="Введите ваш адрес" />
             <BaseFormText v-model="formData.phone" :error="formError.phone" title="Телефон" placeholder="Введите ваш телефон" />
             <BaseFormText v-model="formData.email" :error="formError.email" title="Email" placeholder="Введите ваш Email" />
-            <BaseFormTextarea title="Комментарий к заказу" v-model="formData.comment" :error="formData.comment" placeholder="Ваши пожелания" />
+            <BaseFormTextarea title="Комментарий к заказу" v-model="formData.comment" :error="formError.comment" placeholder="Ваши пожелания" />
           </div>
 
           <div class="cart__options">
@@ -95,10 +95,10 @@
             Оформить заказ
           </button>
         </div>
-        <div class="cart__error form__error-block">
+        <div class="cart__error form__error-block" v-if="formErrorMessage">
           <h4>Заявка не отправлена!</h4>
           <p>
-            Похоже произошла ошибка. Попробуйте отправить снова или перезагрузите страницу.
+            {{ formErrorMessage }}
           </p>
         </div>
       </form>
@@ -112,6 +112,8 @@ import BaseFormTextarea from '@/components/BaseFormTextarea.vue';
 import OrderItem from '@/components/OrderItem.vue';
 import { mapGetters } from 'vuex';
 import numberFormat from '@/helpers/numberFormat';
+import axios from 'axios';
+import { API_BASE_URL } from '@/config';
 
 export default {
     components: {BaseFormText, BaseFormTextarea, OrderItem},
@@ -120,10 +122,33 @@ export default {
         return {
             formData: {}, //данные внесенные в формы
             formError: {}, //ошибки при заполнении формы
+            formErrorMessage: ''
         }
     },
     computed: {
         ...mapGetters({products: 'cartDetailProducts', totalPrice: 'cartTotalPrice'}), //totalPrice для обшей стоимости товара
+    },
+    methods: {
+        order(){
+            this.formError = {};
+            this.formErrorMessage = '';
+
+            axios
+                .post(API_BASE_URL + '/api/orders', {
+                    ...this.formData
+                }, {
+                    params: {
+                        userAccessKey: this.$store.state.userAccessKey
+                    }
+                })
+                .then(() => {
+                    this.$store.commit('resetCart')
+                })
+                .catch(error => {
+                    this.formError = error.response.data.error.request || {};
+                    this.formErrorMessage = error.response.data.error.message;
+                })
+        }
     }
 }
 </script>
