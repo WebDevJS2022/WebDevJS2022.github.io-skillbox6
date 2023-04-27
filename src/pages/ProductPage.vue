@@ -15,9 +15,9 @@
           </router-link>
         </li>
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link">
+          <router-link class="breadcrumbs__link" :to="{name: 'main'}">
             {{ product.title }}
-          </a>
+          </router-link>
         </li>
       </ul>
     </div>
