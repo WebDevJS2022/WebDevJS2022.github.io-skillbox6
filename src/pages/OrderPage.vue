@@ -91,9 +91,11 @@
                 <p>Итого: <b>{{ $store.state.cartProducts.length }}</b> товара на сумму <b>{{ totalPrice | numberFormat }} ₽</b></p>
             </div>
 
-          <button class="cart__button button button--primery" type="submit">
+          <button class="cart__button button button--primery" type="submit" :disabled="orderSending">
             Оформить заказ
           </button>
+          <div v-show="orderSending">Обработка заказа...<transition><img src="../img/Spinner-3.gif"></transition></div>
+          
         </div>
         <div class="cart__error form__error-block" v-if="formErrorMessage">
           <h4>Заявка не отправлена!</h4>
@@ -122,7 +124,9 @@ export default {
         return {
             formData: {}, //данные внесенные в формы
             formError: {}, //ошибки при заполнении формы
-            formErrorMessage: ''
+            formErrorMessage: '',
+
+            orderSending: false, // обработка заказа
         }
     },
     computed: {
@@ -132,6 +136,7 @@ export default {
         order(){
             this.formError = {};
             this.formErrorMessage = '';
+            this.orderSending = true;
 
             axios
                 .post(API_BASE_URL + '/api/orders', {
@@ -147,6 +152,9 @@ export default {
                 .catch(error => {
                     this.formError = error.response.data.error.request || {};
                     this.formErrorMessage = error.response.data.error.message;
+                })
+                .then(() => {
+                    this.orderSending = false;
                 })
         }
     }

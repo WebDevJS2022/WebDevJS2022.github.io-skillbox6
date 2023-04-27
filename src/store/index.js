@@ -147,6 +147,6 @@ export default new Vuex.Store({  // Создаем и Экспортируем �
                 context.commit('updateCartProductsData', response.data.items); //сначала прилетают данные из API
                 context.commit('syncCartProducts');
             })
-        }    
+        } 
     }
   }); 
