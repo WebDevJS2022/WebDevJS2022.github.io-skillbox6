@@ -31,31 +31,28 @@
       <form class="cart__form form" action="#" method="POST">
         <div class="cart__field">
           <div class="cart__data">
-            <label class="form__label">
-              <input class="form__input" v-model="formData.name" type="text" name="name" placeholder="Введите ваше полное имя">
-              <span class="form__value">ФИО</span>
-            </label>
+
+            <BaseFormText v-model="formData.name" :error="formError.name" title="ФИО" placeholder="Введите ваше полное имя" />
 
             <label class="form__label">
               <input class="form__input" v-model="formData.address" type="text" name="address" placeholder="Введите ваш адрес">
               <span class="form__value">Адрес доставки</span>
+              <span class="form__error" v-if="formError.address">{{ formError.address }}</span>
             </label>
 
             <label class="form__label">
               <input class="form__input" v-model="formData.phone" type="tel" name="phone" placeholder="Введите ваш телефон">
               <span class="form__value">Телефон</span>
-              <span class="form__error">Неверный формат телефона</span>
+              <span class="form__error" v-if="formError.phone">{{ formError.phone }}</span>
             </label>
 
             <label class="form__label">
               <input class="form__input" v-model="formData.email" type="email" name="email" placeholder="Введи ваш Email">
               <span class="form__value">Email</span>
+              <span class="form__error" v-if="formError.email">{{ formError.email }}</span>
             </label>
 
-            <label class="form__label">
-              <textarea class="form__input form__input--area" v-model="formData.comments" name="comments" placeholder="Ваши пожелания"></textarea>
-              <span class="form__value">Комментарий к заказу</span>
-            </label>
+            <BaseFormTextarea title="Комментарий к заказу" v-model="formData.comments" :error="formData.comments" placeholder="Ваши пожелания" />
           </div>
 
           <div class="cart__options">
@@ -141,10 +138,15 @@
 </template>
 
 <script>
+import BaseFormText from '@/components/BaseFormText.vue';
+import BaseFormTextarea from '@/components/BaseFormTextarea.vue';
+
 export default {
+    components: {BaseFormText, BaseFormTextarea},
     data(){
         return {
-            formData: {}
+            formData: {}, //данные внесенные в формы
+            formError: {}, //ошибки при заполнении формы
         }
     }
 }
