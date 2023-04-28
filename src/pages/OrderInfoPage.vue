@@ -32,13 +32,13 @@
             Наши менеджеры свяжутся с&nbsp;Вами в&nbsp;течение часа для уточнения деталей доставки.
           </p>
 
-          <ul class="dictionary">
+          <ul class="dictionary" >
             <li class="dictionary__item">
               <span class="dictionary__key">
                 Получатель
               </span>
               <span class="dictionary__value">
-                Иванова Василиса Алексеевна
+                {{ $store.state.orderInfo.name }}
               </span>
             </li>
             <li class="dictionary__item">
@@ -46,7 +46,7 @@
                 Адрес доставки
               </span>
               <span class="dictionary__value">
-                Москва, ул. Ленина, 21, кв. 33
+                {{ $store.state.orderInfo.address }}
               </span>
             </li>
             <li class="dictionary__item">
@@ -54,7 +54,7 @@
                 Телефон
               </span>
               <span class="dictionary__value">
-                8 800 989 74 84
+                {{ $store.state.orderInfo.phone }}
               </span>
             </li>
             <li class="dictionary__item">
@@ -62,7 +62,7 @@
                 Email
               </span>
               <span class="dictionary__value">
-                lalala@mail.ru
+                {{ $store.state.orderInfo.email }}
               </span>
             </li>
             <li class="dictionary__item">
@@ -78,7 +78,6 @@
 
         <div class="cart__block">
 
-            <!-- <OrderItem v-for="item in products" :key="item.productId" :item="item"/> -->
 
             <ul class="cart__orders">
             <li class="cart__order" v-for="item in $store.state.orderInfo.basket.items">
