@@ -16,8 +16,14 @@ export default new Vuex.Store({  // Создаем и Экспортируем �
 
       cartLoading: false,
       cartLoadingFailed: false,
+
+      orderInfo: null,
     },
     mutations: {
+        updateOrderInfo(state, orderInfo){
+            state.orderInfo = orderInfo;
+        },
+
         resetCart(state){ //сброс данных корзины
             state.cartProducts = [];
             state.cartProductsData = [];
@@ -66,8 +72,20 @@ export default new Vuex.Store({  // Создаем и Экспортируем �
           return getters.cartDetailProducts.reduce((acc, item) => (item.product.price * item.amount) + acc, 0);
       }
     },
-    actions: { //действия для получения информации о корзине (вместо мутаций,тк там все дб синхронно)
-        loadCart(context){
+    actions: { 
+        loadOrderInfo(context, orderId){
+            return axios
+            .get(API_BASE_URL + '/api/orders/' + orderId, {
+              params: {
+                  userAccessKey: context.state.userAccessKey
+              }
+            })
+            .then(response => {
+                context.commit('updateOrderInfo', response.data);
+            });
+        },
+
+        loadCart(context){ //действия для получения информации о корзине (вместо мутаций,тк там все дб синхронно)
             context.state.cartLoading = true;
             context.state.cartLoadingFailed = false;
 
