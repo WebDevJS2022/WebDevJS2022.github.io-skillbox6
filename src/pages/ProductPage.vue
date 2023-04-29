@@ -86,7 +86,7 @@
 
             <div class="item__row">
               
-              <FormCounter v-model="productAmount" :amount="productAmount" />
+              <FormCounter v-model="productAmount" />
 
               <button class="button button--primery" type="submit" :disabled="productAddSending">
                 В корзину
